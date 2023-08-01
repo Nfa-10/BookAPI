@@ -1,6 +1,7 @@
 ﻿using BookAPI.Data;
 using BookAPI.Models;
 using Microsoft.AspNetCore.Http;
+using BookAPI.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +42,7 @@ namespace BookAPI.Controllers
 
         //create new author
         [HttpPost]
-        public async Task<IActionResult> AddAuthor(AddAuthor author)
+        public async Task<IActionResult> AddAuthor(AuthorViewModel author)
         {
             var authorNew = new AuthorModel()
             {
@@ -58,7 +59,7 @@ namespace BookAPI.Controllers
         // Put Update
         [HttpPut]
         [Route("{name}")]
-        public async Task<IActionResult> Edit([FromRoute] string name, AddAuthor updateAuth)
+        public async Task<IActionResult> Edit([FromRoute] string name, AuthorViewModel updateAuth)
             {
             var authExists = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
 
