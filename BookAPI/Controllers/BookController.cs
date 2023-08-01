@@ -1,5 +1,6 @@
 ﻿using BookAPI.Data;
 using BookAPI.Models;
+using BookAPI.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -36,14 +37,13 @@ namespace BookAPI.Controllers
             {
                 return NotFound(Constants.NotFound);
             }
-
             return Ok(book);
         }
         
         // GET: BookController/Create
         //create new book
         [HttpPost]
-        public async Task<IActionResult> AddBook(AddBook book)
+        public async Task<IActionResult> AddBook(BookViewModel book)
         {
             var bookNew = new BookModel()
             {
@@ -53,35 +53,29 @@ namespace BookAPI.Controllers
                 dateOfPublishing = book.dateOfPublishing,
                 Edition = book.Edition,
                 Price = book.Price,
-
             };
-
             await _context.Books.AddAsync(bookNew);
             await _context.SaveChangesAsync();
-
             return Ok();
         }
        
         // Put Update
         [HttpPut]
         [Route("{title}")]
-        public async Task<IActionResult> Edit([FromRoute] string title, AddBook updateBook)
+        public async Task<IActionResult> Edit([FromRoute] string title, BookViewModel updateBook)
         {
             var bookExists = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
 
             if (bookExists != null)
             {
-
                 bookExists.Title = updateBook.Title;
                 bookExists.dateOfPublishing = updateBook.dateOfPublishing;
                 bookExists.Edition = updateBook.Edition;
                 bookExists.Price = updateBook.Price;
 
-
                 await _context.SaveChangesAsync();
                 return Ok(bookExists);
             }
-
             return NotFound();
         }
        

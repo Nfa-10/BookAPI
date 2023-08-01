@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookAPI.Models
+namespace BookAPI.ViewModel
 {
-    public class AddBook
+    public class BookViewModel
     {
         [Required(ErrorMessage = "Title is required")]
         [StringLength(30, MinimumLength = 4, ErrorMessage = "Title must be within 4-30 characters")]
