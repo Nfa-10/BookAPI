@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookAPI.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class BookController : Controller
     {
         private readonly BookAPIContext _context;
@@ -17,171 +19,90 @@ namespace BookAPI.Controllers
         }
 
         // GET: BookController
-        public async Task<IActionResult> Index(Guid? id, string searchString)
+        [HttpGet]
+        public async Task<IActionResult> GetBooks()
         {
-            List<AuthorModel> authorList = _context.Author.ToList();
-
-            ViewBag.Authors = new SelectList(authorList, "Id", "Name");
-
-
-
-            if (id != null || !String.IsNullOrEmpty(searchString))
-            {
-                var books = _context.Books.Include(b => b.Author).Where(b => b.Author.Id == id || b.Title!.Contains(searchString));
-
-
-                if (!books.Any())
-                {
-                    ViewBag.Message = "Book Not Found";
-                    return View(await books.ToListAsync());
-                }
-                return View(await books.ToListAsync());
-            }
-            ViewBag.SelectedAuthorId = id;
-            return View(await _context.Books.ToListAsync());
+            _context.Books.ToList();
+            return Ok(await _context.Books.ToListAsync());
         }
 
         // GET: BookController/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        [HttpGet]
+        [Route("{title}")]
+        public async Task<IActionResult> GetBook([FromRoute] string title)
         {
-            if (id == null || _context.Books == null)
+            var book = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+            if (book == null)
             {
-                return NotFound();
+                return NotFound(Constants.NotFound);
             }
 
-            var bookModel = await _context.Books
-                .Include(b => b.Author)
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (bookModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookModel);
+            return Ok(book);
         }
-
+        
         // GET: BookController/Create
-        public IActionResult Create()
-        {
-            ViewData["AuthorID"] = new SelectList(_context.Author, "Id", "Name");
-            return View();
-
-        }
-
-        // POST: BookController/Create
+        //create new book
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Edition,Price,dateOfPublishing,AuthorID")] BookModel bookModel)
+        public async Task<IActionResult> AddBook(AddBook book)
         {
-            try
+            var bookNew = new BookModel()
             {
-                if (ModelState.IsValid)
-                {
-                    bookModel.BookId = Guid.NewGuid();
-                    _context.Add(bookModel);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(bookModel);
-            }
-            catch
-            {
-                ViewData["AuthorID"] = new SelectList(_context.Author, "Id", "Name", bookModel.AuthorID);
-                return View(bookModel);
-            }
-        }
+                AuthorID = book.AuthorID,
+                BookId = Guid.NewGuid(),
+                Title = book.Title,
+                dateOfPublishing = book.dateOfPublishing,
+                Edition = book.Edition,
+                Price = book.Price,
 
-        // GET: BookController/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null || _context.Books == null)
-            {
-                return NotFound();
-            }
+            };
 
-            var bookModel = await _context.Books.FindAsync(id);
-            if (bookModel == null)
-            {
-                return NotFound();
-            }
-            ViewData["AuthorID"] = new SelectList(_context.Author, "Id", "Name", bookModel.AuthorID);
-            return View(bookModel);
-        }
-
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("BookId,Title,Edition,Price,dateOfPublishing,AuthorID")] BookModel bookModel)
-        {
-            if (id != bookModel.BookId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(bookModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookModelExists(bookModel.BookId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AuthorID"] = new SelectList(_context.Author, "Id", "Name", bookModel.AuthorID);
-            return View(bookModel);
-        }
-
-        // GET: BookController/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.Books == null)
-            {
-                return NotFound();
-            }
-
-            var bookModel = await _context.Books
-                .Include(b => b.Author)
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (bookModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookModel);
-        }
-        //POST
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            if (_context.Books == null)
-            {
-                return Problem("Entity set 'BookDbContext.Books'  is null.");
-            }
-            var bookModel = await _context.Books.FindAsync(id);
-            if (bookModel != null)
-            {
-                _context.Books.Remove(bookModel);
-            }
-
+            await _context.Books.AddAsync(bookNew);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
-        private bool BookModelExists(Guid id)
-        {
-            return (_context.Books?.Any(e => e.BookId == id)).GetValueOrDefault();
+            return Ok();
         }
+       
+        // Put Update
+        [HttpPut]
+        [Route("{title}")]
+        public async Task<IActionResult> Edit([FromRoute] string title, AddBook updateBook)
+        {
+            var bookExists = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+
+            if (bookExists != null)
+            {
+
+                bookExists.Title = updateBook.Title;
+                bookExists.dateOfPublishing = updateBook.dateOfPublishing;
+                bookExists.Edition = updateBook.Edition;
+                bookExists.Price = updateBook.Price;
+
+
+                await _context.SaveChangesAsync();
+                return Ok(bookExists);
+            }
+
+            return NotFound();
+        }
+       
+       //Delete
+       [HttpDelete]
+       [Route("{title}")]
+       public async Task<IActionResult> DeleteBook([FromRoute] string title)
+       {
+           var book = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+
+           if (book != null)
+           {
+               _context.Remove(book);
+               await _context.SaveChangesAsync();
+               return Ok(Constants.Deletion);
+           }
+
+           return NotFound();
+
+
+       }
+      
     }
 }

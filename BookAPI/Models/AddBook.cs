@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookAPI.Models
 {
-    public class BookModel
+    public class AddBook
     {
-        [Key]
-        public Guid BookId { get; set; }
-
         [Required(ErrorMessage = "Title is required")]
         [StringLength(30, MinimumLength = 4, ErrorMessage = "Title must be within 4-30 characters")]
         public string Title { get; set; }
@@ -23,9 +20,8 @@ namespace BookAPI.Models
         [DataType(DataType.Date)]
         public DateTime dateOfPublishing { get; set; }
 
-        public virtual AuthorModel Author { get; set; }
         [ForeignKey("AuthorID")]
-        public  virtual Guid AuthorID { get; set; }
-
+        public virtual Guid AuthorID { get; set; }
+        
     }
 }
