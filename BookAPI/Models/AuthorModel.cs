@@ -9,11 +9,11 @@ namespace BookAPI.Models
             get;
             set;
         }
-
+      
         public string Name { get; set; }
-       
-        public int Gender { get; set; }
 
-        
+        public int Gender { get; set; }
+        public virtual ICollection<BookModel>? Books { get; set; }
+
     }
 }
