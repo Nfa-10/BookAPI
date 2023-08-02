@@ -24,7 +24,7 @@ namespace BookAPI.Models
         public DateTime dateOfPublishing { get; set; }
 
         public virtual AuthorModel Author { get; set; }
-        [ForeignKey("AuthorID")]
+        [ForeignKey("Author")]
         public  virtual Guid AuthorID { get; set; }
 
     }

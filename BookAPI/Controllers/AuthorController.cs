@@ -27,9 +27,8 @@ namespace BookAPI.Controllers
         }
 
         //GET: Author/Create
-        [HttpGet]
-        [Route("{name}")]
-        public async Task<IActionResult> GetAuthor([FromRoute] string name)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetAuthor([FromQuery] string name)
         {
             var author = await _context.Author.FirstOrDefaultAsync(a=>a.Name==name);
             if (author == null) 
@@ -42,7 +41,7 @@ namespace BookAPI.Controllers
 
         //create new author
         [HttpPost]
-        public async Task<IActionResult> AddAuthor(AuthorViewModel author)
+        public async Task<IActionResult> AddAuthor([FromBody]AuthorViewModel author)
         {
             var authorNew = new AuthorModel()
             {
@@ -58,10 +57,9 @@ namespace BookAPI.Controllers
         }
         // Put Update
         [HttpPut]
-        [Route("{name}")]
-        public async Task<IActionResult> Edit([FromRoute] string name, AuthorViewModel updateAuth)
+        public async Task<IActionResult> Edit([FromBody]AuthorViewModel updateAuth)
             {
-            var authExists = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
+            var authExists = await _context.Author.FirstOrDefaultAsync(a=>a.Id == updateAuth.AuthorId);
 
             if (authExists != null)
                 {
@@ -77,10 +75,9 @@ namespace BookAPI.Controllers
 
         //Delete
         [HttpDelete]
-        [Route("{name}")]
-        public async Task<IActionResult> DeleteAuthor([FromRoute] string name)
+        public async Task<IActionResult> DeleteAuthor([FromBody] Guid id)
         {
-            var contact = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
+            var contact = await _context.Author.FirstOrDefaultAsync(a => a.Id == id);
 
             if (contact != null)
             {

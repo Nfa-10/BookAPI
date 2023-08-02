@@ -4,6 +4,7 @@ using BookAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookAPI.Migrations
 {
     [DbContext(typeof(BookAPIContext))]
-    partial class BookAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20230802063353_FK")]
+    partial class FK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,17 +76,12 @@ namespace BookAPI.Migrations
             modelBuilder.Entity("BookAPI.Models.BookModel", b =>
                 {
                     b.HasOne("BookAPI.Models.AuthorModel", "Author")
-                        .WithMany("Books")
+                        .WithMany()
                         .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("BookAPI.Models.AuthorModel", b =>
-                {
-                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
