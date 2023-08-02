@@ -14,6 +14,7 @@ namespace BookAPI.Models
        
         public int Gender { get; set; }
 
-        
+        public virtual ICollection<BookModel>? Books { get; set; }
+
     }
 }

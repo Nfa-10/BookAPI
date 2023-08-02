@@ -28,9 +28,8 @@ namespace BookAPI.Controllers
         }
 
         // GET: BookController/Details/5
-        [HttpGet]
-        [Route("{title}")]
-        public async Task<IActionResult> GetBook([FromRoute] string title)
+        [HttpGet ("{title}")]      
+        public async Task<IActionResult> GetBook([FromQuery] string title)
         {
             var book = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
             if (book == null)
@@ -61,10 +60,9 @@ namespace BookAPI.Controllers
        
         // Put Update
         [HttpPut]
-        [Route("{title}")]
-        public async Task<IActionResult> Edit([FromRoute] string title, [FromBody] BookViewModel updateBook)
+        public async Task<IActionResult> Edit([FromBody] BookViewModel updateBook)
         {
-            var bookExists = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+            var bookExists = await _context.Books.FirstOrDefaultAsync(a => a.BookId == updateBook.BookId);
 
             if (bookExists != null)
             {
@@ -78,13 +76,13 @@ namespace BookAPI.Controllers
             }
             return NotFound();
         }
-       
-       //Delete
-       [HttpDelete]
-       [Route("{title}")]
-       public async Task<IActionResult> DeleteBook([FromRoute] string title)
+
+        //Delete
+        [HttpDelete]
+        
+       public async Task<IActionResult> DeleteBook([FromBody] Guid Id)
        {
-           var book = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
+           var book = await _context.Books.FirstOrDefaultAsync(a => a.BookId == Id);
 
            if (book != null)
            {
