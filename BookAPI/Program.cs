@@ -3,8 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
+// Add services to the container.
+builder.Services.AddCors(options => options.AddPolicy("corsPolicy", policy => {
+
+    policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+
+}));
 
 builder.Services.AddControllers();
 
@@ -25,6 +30,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("corsPolicy");
 
 app.UseAuthorization();
 
