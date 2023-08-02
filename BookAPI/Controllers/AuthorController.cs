@@ -27,13 +27,12 @@ namespace BookAPI.Controllers
         }
 
         //GET: Author/Create
-        [HttpGet("{name}")]
-        /*[Route("{name}")]*/
-
-        public async Task<IActionResult> GetAuthor([FromQuery] string name)
+        [HttpGet]
+        [Route("{name}")]
+        public async Task<IActionResult> GetAuthor([FromRoute] string name)
         {
-            var author = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
-            if (author == null)
+            var author = await _context.Author.FirstOrDefaultAsync(a=>a.Name==name);
+            if (author == null) 
             {
                 return NotFound(Constants.NotFound);
             }
@@ -43,7 +42,7 @@ namespace BookAPI.Controllers
 
         //create new author
         [HttpPost]
-        public async Task<IActionResult> AddAuthor([FromBody] AuthorViewModel author)
+        public async Task<IActionResult> AddAuthor([FromBody]AuthorViewModel author)
         {
             var authorNew = new AuthorModel()
             {
@@ -57,30 +56,31 @@ namespace BookAPI.Controllers
 
             return Ok();
         }
-
         // Put Update
         [HttpPut]
-        public async Task<IActionResult> Edit([FromBody] AuthorViewModel updateAuth)
-        {
-            var authExists = await _context.Author.FirstOrDefaultAsync(a => a.Id == updateAuth.AuthorID);
+        [Route("{name}")]
+        public async Task<IActionResult> Edit([FromRoute] string name, [FromBody]AuthorViewModel updateAuth)
+            {
+            var authExists = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
 
             if (authExists != null)
-            {
+                {
                 authExists.Name = updateAuth.Name;
                 authExists.Gender = updateAuth.Gender;
 
-                await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();   
                 return Ok(authExists);
-            }
+                }
 
             return NotFound();
-        }
+            }
 
         //Delete
         [HttpDelete]
-        public async Task<IActionResult> DeleteAuthor([FromBody] Guid id)
+        [Route("{name}")]
+        public async Task<IActionResult> DeleteAuthor([FromRoute] string name)
         {
-            var contact = await _context.Author.FirstOrDefaultAsync(a => a.Id == id);
+            var contact = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
 
             if (contact != null)
             {
@@ -93,6 +93,6 @@ namespace BookAPI.Controllers
 
 
         }
-
+       
     }
 }

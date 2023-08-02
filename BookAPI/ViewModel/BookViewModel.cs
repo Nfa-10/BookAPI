@@ -5,8 +5,6 @@ namespace BookAPI.ViewModel
 {
     public class BookViewModel
     {
-        public Guid? BookId { get; set; }
-
         [Required(ErrorMessage = "Title is required")]
         [StringLength(30, MinimumLength = 4, ErrorMessage = "Title must be within 4-30 characters")]
         public string Title { get; set; }

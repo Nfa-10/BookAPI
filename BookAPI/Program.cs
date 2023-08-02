@@ -4,23 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
-
-    // //You can add named policies with different configurations if needed
-    // options.AddPolicy("CustomPolicy", builder =>
-    // {
-    //     builder.WithOrigins("https://example.com")
-    //            .AllowAnyHeader()
-    //            .AllowAnyMethod();
-    // });
-});
 
 
 builder.Services.AddControllers();
@@ -42,10 +25,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseRouting();
-
-app.UseCors();
 
 app.UseAuthorization();
 

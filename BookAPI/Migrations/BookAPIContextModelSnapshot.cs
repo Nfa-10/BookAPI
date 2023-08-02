@@ -73,17 +73,12 @@ namespace BookAPI.Migrations
             modelBuilder.Entity("BookAPI.Models.BookModel", b =>
                 {
                     b.HasOne("BookAPI.Models.AuthorModel", "Author")
-                        .WithMany("Books")
+                        .WithMany()
                         .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("BookAPI.Models.AuthorModel", b =>
-                {
-                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
