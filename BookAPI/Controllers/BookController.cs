@@ -43,7 +43,7 @@ namespace BookAPI.Controllers
         // GET: BookController/Create
         //create new book
         [HttpPost]
-        public async Task<IActionResult> AddBook(BookViewModel book)
+        public async Task<IActionResult> AddBook([FromBody] BookViewModel book)
         {
             var bookNew = new BookModel()
             {
@@ -62,7 +62,7 @@ namespace BookAPI.Controllers
         // Put Update
         [HttpPut]
         [Route("{title}")]
-        public async Task<IActionResult> Edit([FromRoute] string title, BookViewModel updateBook)
+        public async Task<IActionResult> Edit([FromRoute] string title, [FromBody] BookViewModel updateBook)
         {
             var bookExists = await _context.Books.FirstOrDefaultAsync(a => a.Title == title);
 

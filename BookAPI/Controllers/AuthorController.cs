@@ -42,7 +42,7 @@ namespace BookAPI.Controllers
 
         //create new author
         [HttpPost]
-        public async Task<IActionResult> AddAuthor(AuthorViewModel author)
+        public async Task<IActionResult> AddAuthor([FromBody]AuthorViewModel author)
         {
             var authorNew = new AuthorModel()
             {
@@ -59,7 +59,7 @@ namespace BookAPI.Controllers
         // Put Update
         [HttpPut]
         [Route("{name}")]
-        public async Task<IActionResult> Edit([FromRoute] string name, AuthorViewModel updateAuth)
+        public async Task<IActionResult> Edit([FromRoute] string name, [FromBody]AuthorViewModel updateAuth)
             {
             var authExists = await _context.Author.FirstOrDefaultAsync(a => a.Name == name);
 
