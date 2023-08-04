@@ -2,13 +2,16 @@
 using BookAPI.Models;
 using Microsoft.AspNetCore.Http;
 using BookAPI.ViewModel;
+using BookAPI.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AuthorController : Controller
     {
         private readonly BookAPIContext _context;
@@ -33,7 +36,7 @@ namespace BookAPI.Controllers
             var author = await _context.Author.FirstOrDefaultAsync(a=>a.Name==name);
             if (author == null) 
             {
-                return NotFound(Constants.NotFound);
+                return NotFound(Message.NOT_FOUND);
             }
 
             return Ok(author);
@@ -83,7 +86,7 @@ namespace BookAPI.Controllers
             {
                 _context.Remove(contact);
                 await _context.SaveChangesAsync();
-                return Ok(Constants.Deletion);
+                return Ok(Message.DELETION);
             }
 
             return NotFound();

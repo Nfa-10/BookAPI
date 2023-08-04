@@ -21,6 +21,7 @@ namespace BookAPI.Data
         }
         public DbSet<BookModel> Books { get; set; }
         public DbSet<AuthorModel> Author { get; set; }
+        public DbSet<UserModel> Users { get; set; }
     }
 
 }
